@@ -115,7 +115,9 @@ function cleanName(raw) {
       break;
     }
   }
-  name = squish(name).replace('Blue Gray', 'Gray Blue').replace(/Sea Green/g, 'Seagreen');
+  name = squish(name)
+    .replace('Blue Gray', 'Gray Blue')
+    .replace(/Sea Green/g, 'Seagreen');
   return name;
 }
 

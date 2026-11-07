@@ -25,6 +25,11 @@ export interface QuantizeOptions {
   /** Error diffusion strength when dithering (0–1). */
   ditherStrength?: number;
   seed?: number;
+  /**
+   * Exponent applied to colour frequencies when choosing the palette. 1 = pure pixel counts
+   * (large areas dominate); lower values give small but distinct details more say.
+   */
+  weightPower?: number;
 }
 
 export interface QuantizedGrid {
@@ -39,11 +44,18 @@ export interface QuantizedGrid {
 const PREFILTER = 10;
 /** Above this many colour bins, clustering switches to coarser bins. */
 const MAX_POINTS = 4096;
+const KMEANS_RUNS = 3;
 const topIdx = new Int32Array(PREFILTER);
 const topD = new Float64Array(PREFILTER);
 
 /** Nearest entry by plain CIE76 distance. */
-function nearestIndex76(labs: Float64Array, count: number, L: number, a: number, b: number): number {
+function nearestIndex76(
+  labs: Float64Array,
+  count: number,
+  L: number,
+  a: number,
+  b: number,
+): number {
   let best = 0;
   let bestD = Infinity;
   for (let i = 0; i < count; i++) {
@@ -113,7 +125,13 @@ export function kMeans(
   k: number,
   rand: () => number,
   maxIter = 30,
-): { centers: Float64Array; assignment: Int32Array; clusterWeights: Float64Array } {
+): {
+  centers: Float64Array;
+  assignment: Int32Array;
+  clusterWeights: Float64Array;
+  /** Weighted sum of squared distances to the nearest centre. */
+  error: number;
+} {
   const n = weights.length;
   k = Math.min(k, n);
   const centers = new Float64Array(k * 3);
@@ -202,7 +220,9 @@ export function kMeans(
     }
     if (maxShift < 0.01) break;
   }
-  return { centers, assignment, clusterWeights };
+  let error = 0;
+  for (let i = 0; i < n; i++) error += weights[i] * d2[i];
+  return { centers, assignment, clusterWeights, error };
 }
 
 /** Snaps cluster means to distinct palette threads, heaviest clusters choosing first. */
@@ -295,6 +315,7 @@ export function quantizeGrid(
   }
 
   const P = binIds.length;
+  const power = opts.weightPower ?? 1;
   const points = new Float64Array(P * 3);
   const weights = new Float64Array(P);
   binIds.forEach((bin, p) => {
@@ -302,7 +323,7 @@ export function quantizeGrid(
     points[p * 3] = sums[bin * 3] / c;
     points[p * 3 + 1] = sums[bin * 3 + 1] / c;
     points[p * 3 + 2] = sums[bin * 3 + 2] / c;
-    weights[p] = c;
+    weights[p] = power === 1 ? c : c ** power;
   });
 
   const paletteLabs = labsOf(palette);
@@ -311,15 +332,23 @@ export function quantizeGrid(
   // Direct mapping when the image already needs few threads (stops as soon as it doesn't).
   const direct = new Set<number>();
   for (let p = 0; p < P && direct.size <= maxColors; p++) {
-    direct.add(nearestIndex(paletteLabs, paletteSize, points[p * 3], points[p * 3 + 1], points[p * 3 + 2]));
+    direct.add(
+      nearestIndex(paletteLabs, paletteSize, points[p * 3], points[p * 3 + 1], points[p * 3 + 2]),
+    );
   }
 
   let chosen: number[];
   if (direct.size <= maxColors) {
     chosen = [...direct.keys()];
   } else {
-    const rand = mulberry32(opts.seed ?? 1);
-    const { centers, clusterWeights } = kMeans(points, weights, maxColors, rand);
+    // k-means depends on its random start; keep the best of a few seeded runs.
+    const seed = opts.seed ?? 1;
+    let best: ReturnType<typeof kMeans> | null = null;
+    for (let run = 0; run < KMEANS_RUNS; run++) {
+      const result = kMeans(points, weights, maxColors, mulberry32(seed + run * 7919));
+      if (!best || result.error < best.error) best = result;
+    }
+    const { centers, clusterWeights } = best!;
     chosen = snapToPalette(centers, clusterWeights, paletteLabs, paletteSize);
 
     // Refine: re-centre each chosen thread on the colours it actually represents.
@@ -371,7 +400,14 @@ export function quantizeGrid(
         let best = 0;
         let bestD = Infinity;
         for (let c = 0; c < k; c++) {
-          const d = deltaE76Sq(L, a, b, chosenLabs[c * 3], chosenLabs[c * 3 + 1], chosenLabs[c * 3 + 2]);
+          const d = deltaE76Sq(
+            L,
+            a,
+            b,
+            chosenLabs[c * 3],
+            chosenLabs[c * 3 + 1],
+            chosenLabs[c * 3 + 2],
+          );
           if (d < bestD) {
             bestD = d;
             best = c;
@@ -403,7 +439,15 @@ export function quantizeGrid(
       if (key < 0) continue;
       let c = cache.get(key);
       if (c === undefined) {
-        c = nearestIndex(chosenLabs, k, labs[i * 3], labs[i * 3 + 1], labs[i * 3 + 2], undefined, 4);
+        c = nearestIndex(
+          chosenLabs,
+          k,
+          labs[i * 3],
+          labs[i * 3 + 1],
+          labs[i * 3 + 2],
+          undefined,
+          4,
+        );
         cache.set(key, c);
       }
       cells[i] = c;

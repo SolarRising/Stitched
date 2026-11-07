@@ -9,7 +9,8 @@ const grid = (rows: string[]) => {
 const show = (cells: Uint16Array, w: number) => {
   const rev = (c: number) => (c === EMPTY ? '.' : 'abc'[c]);
   const rows: string[] = [];
-  for (let i = 0; i < cells.length; i += w) rows.push(Array.from(cells.slice(i, i + w), rev).join(''));
+  for (let i = 0; i < cells.length; i += w)
+    rows.push(Array.from(cells.slice(i, i + w), rev).join(''));
   return rows;
 };
 

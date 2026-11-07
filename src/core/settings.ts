@@ -1,7 +1,16 @@
 import type { GenerateOptions } from './generate';
 import { FULL_CROP, normalizeCrop, type CropRect, type ResampleMode, type Rotation } from './image';
 import { threadById } from './palettes';
-import { clampStitches, DEFAULT_FABRIC_ID, defaultStrands, fabricById, presetById } from './sizing';
+import {
+  clampStitches,
+  DEFAULT_FABRIC_ID,
+  defaultStrands,
+  fabricById,
+  fitToBox,
+  heightForWidth,
+  presetById,
+  widthForHeight,
+} from './sizing';
 
 export interface Settings {
   name: string;
@@ -56,6 +65,30 @@ export const DEFAULT_SETTINGS: Settings = {
   fabricColor: '#ffffff',
 };
 
+/** Aspect ratio (width / height) of the cropped, rotated image. */
+export function settingsAspect(imageWidth: number, imageHeight: number, s: Settings): number {
+  const swap = s.rotation === 90 || s.rotation === 270;
+  const w = swap ? imageHeight : imageWidth;
+  const h = swap ? imageWidth : imageHeight;
+  const c = normalizeCrop(s.crop);
+  return (w * c.w) / (h * c.h);
+}
+
+/**
+ * Stitch grid size for the given aspect ratio: fitted into the garment preset if one is
+ * selected, otherwise keeping the longer side (when proportions are locked).
+ */
+export function fitSize(s: Settings, aspect: number): { width: number; height: number } {
+  const fabric = fabricById(s.fabricId);
+  const preset = presetById(s.presetId);
+  if (preset) return fitToBox(aspect, preset.maxWidthCm, preset.maxHeightCm, fabric);
+  if (!s.lockAspect) return { width: s.width, height: s.height };
+  const longer = Math.max(s.width, s.height);
+  return aspect >= 1
+    ? { width: longer, height: heightForWidth(longer, aspect) }
+    : { width: widthForHeight(longer, aspect), height: longer };
+}
+
 export function toGenerateOptions(s: Settings): GenerateOptions {
   return {
     width: s.width,
@@ -83,7 +116,9 @@ function num(v: unknown, fallback: number, min: number, max: number, int = false
 }
 
 function threadIds(v: unknown): string[] {
-  return Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string' && !!threadById(x)) : [];
+  return Array.isArray(v)
+    ? v.filter((x): x is string => typeof x === 'string' && !!threadById(x))
+    : [];
 }
 
 /** Coerces untrusted input (project files, storage) into valid settings. */

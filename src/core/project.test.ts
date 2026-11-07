@@ -26,7 +26,11 @@ describe('project files', () => {
     ).toThrow(ProjectFormatError);
     expect(() =>
       parseProject(
-        JSON.stringify({ format: 'stitched-project', version: 1, image: { dataUrl: 'javascript:1' } }),
+        JSON.stringify({
+          format: 'stitched-project',
+          version: 1,
+          image: { dataUrl: 'javascript:1' },
+        }),
       ),
     ).toThrow(ProjectFormatError);
   });

@@ -67,7 +67,10 @@ describe('quantizeGrid', () => {
     const g = generateGrid(img, { ...base, width: 10, height: 10 });
     expect(g.cells[0]).toBe(EMPTY);
     expect(g.cells[9]).not.toBe(EMPTY);
-    const blank = generateGrid(makeImage(4, 4, () => [0, 0, 0, 0]), { ...base, width: 4, height: 4 });
+    const blank = generateGrid(
+      makeImage(4, 4, () => [0, 0, 0, 0]),
+      { ...base, width: 4, height: 4 },
+    );
     expect(blank.threadIds).toEqual([]);
   });
 

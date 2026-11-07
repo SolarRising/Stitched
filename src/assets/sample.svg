@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="800" height="800">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#27325e"/>
+      <stop offset="0.45" stop-color="#8a4f7d"/>
+      <stop offset="0.72" stop-color="#e8735a"/>
+      <stop offset="1" stop-color="#f7c873"/>
+    </linearGradient>
+    <clipPath id="badge"><circle cx="200" cy="200" r="176"/></clipPath>
+  </defs>
+  <g clip-path="url(#badge)">
+    <rect width="400" height="400" fill="url(#sky)"/>
+    <!-- stars -->
+    <g fill="#fff6d8">
+      <circle cx="96" cy="88" r="3.2"/>
+      <circle cx="150" cy="60" r="2.4"/>
+      <circle cx="262" cy="74" r="3"/>
+      <circle cx="318" cy="112" r="2.4"/>
+      <circle cx="210" cy="104" r="2"/>
+    </g>
+    <!-- sun -->
+    <circle cx="200" cy="246" r="66" fill="#ffe2a0"/>
+    <circle cx="200" cy="246" r="52" fill="#fff1c9"/>
+    <!-- far mountains -->
+    <path d="M-10 290 L70 214 L118 252 L196 150 L282 262 L332 216 L410 276 L410 410 L-10 410 Z" fill="#4a3f74"/>
+    <path d="M196 150 L222 184 L206 180 L194 194 L182 180 L168 186 Z" fill="#f4eefa"/>
+    <path d="M70 214 L88 231 L76 229 L66 236 L58 226 Z" fill="#f4eefa"/>
+    <!-- hills -->
+    <path d="M-10 318 Q90 270 190 306 T410 296 L410 410 L-10 410 Z" fill="#2f6a5c"/>
+    <!-- pines -->
+    <g fill="#1c4038">
+      <path d="M64 330 L84 278 L104 330 Z"/>
+      <path d="M92 336 L108 292 L124 336 Z"/>
+      <path d="M286 326 L306 268 L326 326 Z"/>
+      <path d="M318 332 L334 290 L350 332 Z"/>
+    </g>
+    <!-- lake -->
+    <path d="M-10 352 Q120 336 210 350 T410 346 L410 410 L-10 410 Z" fill="#3f86a8"/>
+    <path d="M150 362 H250 M170 374 H230" stroke="#ffe2a0" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <circle cx="200" cy="200" r="176" fill="none" stroke="#1d2340" stroke-width="16"/>
+</svg>

@@ -50,7 +50,14 @@ function heartPoints(): number[] {
   return pts;
 }
 
-function arcPoints(cx: number, cy: number, r: number, from: number, to: number, steps = 16): number[] {
+function arcPoints(
+  cx: number,
+  cy: number,
+  r: number,
+  from: number,
+  to: number,
+  steps = 16,
+): number[] {
   const pts: number[] = [];
   for (let i = 0; i <= steps; i++) {
     const a = from + ((to - from) * i) / steps;
@@ -171,7 +178,8 @@ const ORDER = [
 ];
 
 export const SYMBOLS: readonly SymbolDef[] = ORDER.map((id) => {
-  if (id.startsWith('g:')) return { id, ops: [['t', id.slice(2), 0.74] as const] };
+  // Glyph size chosen so capitals look as heavy as the drawn shapes.
+  if (id.startsWith('g:')) return { id, ops: [['t', id.slice(2), 0.86] as const] };
   const ops = SHAPES[id];
   if (!ops) throw new Error(`Unknown symbol shape ${id}`);
   return { id, ops };
@@ -181,7 +189,7 @@ export const SYMBOLS: readonly SymbolDef[] = ORDER.map((id) => {
 export function symbolAt(index: number): SymbolDef {
   if (index < SYMBOLS.length) return SYMBOLS[index];
   const label = String(index - SYMBOLS.length + 10);
-  return { id: `n:${label}`, ops: [['t', label, 0.5]] };
+  return { id: `n:${label}`, ops: [['t', label, 0.62]] };
 }
 
 /** Draws a symbol into the cell at (x, y) of the given size. */

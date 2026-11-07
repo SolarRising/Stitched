@@ -26,6 +26,7 @@ export default defineConfig([
   {
     files: ['scripts/**/*.mjs', '*.config.{js,ts}'],
     extends: [js.configs.recommended],
-    languageOptions: { globals: globals.node },
+    // Browser globals too: Playwright scripts pass callbacks that run in the page.
+    languageOptions: { globals: { ...globals.node, ...globals.browser } },
   },
 ]);

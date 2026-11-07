@@ -33,7 +33,10 @@ export interface PostProcess {
   edits: ReadonlyMap<number, string>;
 }
 
-export function resolveReplacement(id: string, replacements: Readonly<Record<string, string>>): string {
+export function resolveReplacement(
+  id: string,
+  replacements: Readonly<Record<string, string>>,
+): string {
   let current = id;
   const seen = new Set<string>();
   while (replacements[current] && !seen.has(current)) {

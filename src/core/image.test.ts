@@ -34,7 +34,9 @@ describe('rotateImage', () => {
 describe('resampleToGrid', () => {
   it('averages blocks of pixels', () => {
     // 4×2: left half black/white checker (avg 127.5), right half red.
-    const img = makeImage(4, 2, (x, y) => (x < 2 ? ((x + y) % 2 ? [255, 255, 255] : [0, 0, 0]) : [255, 0, 0]));
+    const img = makeImage(4, 2, (x, y) =>
+      x < 2 ? ((x + y) % 2 ? [255, 255, 255] : [0, 0, 0]) : [255, 0, 0],
+    );
     const g = resampleToGrid(img, FULL_CROP, 2, 1, 'average');
     expect(g.rgb[0]).toBeCloseTo(127.5);
     expect(Array.from(g.rgb.slice(3, 6))).toEqual([255, 0, 0]);
