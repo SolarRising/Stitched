@@ -4,7 +4,7 @@
 Wybierz rozmiar (np. logo na piersi, plecy bluzy, czapka), ogranicz liczbę kolorów nici DMC
 i pobierz gotowy wzór do druku w PDF.
 
-### ▶ [Otwórz aplikację](https://GITHUB_USER.github.io/Stitched/)
+### ▶ [Otwórz aplikację](https://solarrising.github.io/Stitched/)
 
 Działa w przeglądarce na komputerze, tablecie i telefonie. Niczego nie trzeba instalować,
 a obraz nie opuszcza Twojego urządzenia, bo wszystko liczy się lokalnie.
@@ -129,7 +129,7 @@ Każdy push do gałęzi `main` uruchamia testy i publikuje aplikację na GitHub 
 
 **Stitched** turns any image into a cross-stitch pattern sized for a spot on a garment.
 It runs entirely in the browser, so your image never leaves your device.
-**[Open the app](https://GITHUB_USER.github.io/Stitched/)**
+**[Open the app](https://solarrising.github.io/Stitched/)**
 
 - **Garment presets**: left chest, T-shirt front, hoodie back, sleeve, pocket, cap, denim
   jacket, baby bodysuit, tote bag and patch. Custom sizes work in cm or stitches.
