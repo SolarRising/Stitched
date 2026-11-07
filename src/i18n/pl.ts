@@ -19,6 +19,8 @@ export const pl = {
   'empty.step2': 'Dopasuj rozmiar i kolory',
   'empty.step3': 'Pobierz PDF do druku',
   'empty.dropHere': 'Upuść, aby otworzyć',
+  'empty.offline': 'Pobierz wersję offline (jeden plik HTML)',
+  'empty.source': 'Kod źródłowy na GitHubie',
 
   'section.image': 'Obraz',
   'section.size': 'Rozmiar i materiał',

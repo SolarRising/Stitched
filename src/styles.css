@@ -1053,6 +1053,15 @@ input[type='range']::-moz-range-thumb {
   font-size: 0.8rem;
 }
 
+.links a {
+  color: var(--accent);
+  font-weight: 550;
+  text-decoration: none;
+}
+.links a:hover {
+  text-decoration: underline;
+}
+
 .drop-overlay {
   position: fixed;
   inset: 12px;

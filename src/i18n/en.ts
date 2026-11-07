@@ -21,6 +21,8 @@ export const en: Record<MessageKey, string> = {
   'empty.step2': 'Adjust size and colours',
   'empty.step3': 'Download a printable PDF',
   'empty.dropHere': 'Drop to open',
+  'empty.offline': 'Download the offline version (single HTML file)',
+  'empty.source': 'Source code on GitHub',
 
   'section.image': 'Image',
   'section.size': 'Size & fabric',
